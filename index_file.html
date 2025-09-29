@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shortcut Wizard's Quest</title>
+<style>
+  body { 
+    font-family: 'Georgia', serif; 
+    background: linear-gradient(45deg, #0f0f23, #1a1a3a, #2d1b69);
+    background-size: 400% 400%;
+    animation: mysticalBg 8s ease-in-out infinite;
+    color: white; 
+    margin: 0; 
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  @keyframes mysticalBg {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  
+  h1 { 
+    text-align: center; 
+    margin-bottom: 10px;
+    font-size: 32px;
+    text-shadow: 0 0 20px #4a90e2;
+    color: #87ceeb;
+  }
+
+  .story-panel {
+    background: rgba(0,0,0,0.7);
+    border: 2px solid #4a90e2;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 0 auto 20px auto;
+    max-width: 900px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(74, 144, 226, 0.3);
+  }
+
+  .story-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #e6f3ff;
+    font-style: italic;
+  }
+  
+  .main-container { 
+    display: flex; 
+    justify-content: center; 
+    gap: 30px; 
+    align-items: flex-start; 
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .game-section { 
+    text-align: center; 
+    flex: 1;
+    min-width: 700px;
+  }
+  
+  .shortcuts-panel { 
+    background: rgba(139, 69, 19, 0.4); 
+    border: 2px solid #cd853f;
+    border-radius: 15px; 
+    padding: 20px; 
+    width: 320px;
+    height: fit-content;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(205, 133, 63, 0.3);
+  }
+  
+  .shortcuts-panel h3 { 
+    margin-top: 0; 
+    color: #daa520; 
+    text-align: center; 
+    font-size: 18px;
+    text-shadow: 0 0 10px #daa520;
+  }
+  
+  .shortcut-item { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    margin: 8px 0; 
+    padding: 8px; 
+    background: rgba(139, 69, 19, 0.3); 
+    border-radius: 8px; 
+    font-size: 14px;
+    border: 1px solid rgba(205, 133, 63, 0.5);
+  }
+  
+  .shortcut-keys { 
+    font-family: monospace; 
+    color: #ffd700; 
+    font-weight: bold;
+  }
+  
+  .shortcut-desc { 
+    color: #f0e68c; 
+  }
+
+  #gameArea { 
+    margin: 20px auto; 
+    width: 700px; 
+    height: 150px; 
+    background: linear-gradient(to bottom, #001122, #003366);
+    border: 3px solid #4a90e2; 
+    position: relative; 
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0, 50, 100, 0.5);
+  }
+  
+  #player { 
+    width: 40px; 
+    height: 40px; 
+    background: radial-gradient(circle, #32cd32, #228b22);
+    position: absolute; 
+    bottom: 10px; 
+    left: 10px; 
+    border-radius: 50%; 
+    transition: left 0.3s; 
+    box-shadow: 0 0 15px rgba(50, 205, 50, 0.8);
+    border: 2px solid #90ee90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  
+  .obstacle { 
+    width: 40px; 
+    height: 40px; 
+    background: radial-gradient(circle, #8b0000, #ff0000);
+    position: absolute; 
+    bottom: 10px; 
+    border-radius: 8px; 
+    box-shadow: 0 0 15px rgba(220, 20, 60, 0.8);
+    border: 2px solid #ff6666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  
+  #challenge { 
+    font-size: 24px; 
+    margin: 15px 0; 
+    padding: 15px 25px; 
+    background: rgba(25, 25, 112, 0.8); 
+    border: 2px solid #4169e1;
+    border-radius: 15px; 
+    display: inline-block; 
+    color: #87ceeb;
+    font-weight: bold;
+    text-shadow: 0 0 10px #4169e1;
+    box-shadow: 0 0 20px rgba(65, 105, 225, 0.4);
+  }
+  
+  #feedback { 
+    font-size: 18px; 
+    margin: 10px; 
+    min-height: 30px;
+    font-weight: bold;
+  }
+  
+  #timer, #score { 
+    font-size: 18px; 
+    margin: 5px; 
+    font-weight: bold;
+    text-shadow: 0 0 5px currentColor;
+  }
+
+  #timer {
+    color: #ff6b6b;
+  }
+
+  #score {
+    color: #4ecdc4;
+  }
+  
+  #restartBtn { 
+    margin-top: 15px; 
+    padding: 12px 25px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    border-radius: 25px; 
+    border: 2px solid #4a90e2; 
+    background: linear-gradient(45deg, #4a90e2, #87ceeb);
+    color: #003366; 
+    font-weight: bold;
+    transition: all 0.3s;
+    box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+  }
+
+  #restartBtn:hover {
+    background: linear-gradient(45deg, #87ceeb, #4a90e2);
+    box-shadow: 0 0 25px rgba(74, 144, 226, 0.8);
+    transform: scale(1.05);
+  }
+
+  .player-hit {
+    animation: shake 0.5s ease-in-out;
+    background: radial-gradient(circle, #ffa500, #ff8c00) !important;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .battle-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(139, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  .explosion {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #ffff00, #ff6b00, #ff0000, transparent);
+    border-radius: 50%;
+    animation: explode 0.8s ease-out forwards;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  @keyframes explode {
+    0% { transform: scale(0.1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.8; }
+    100% { transform: scale(3); opacity: 0; }
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  @media (max-width: 1200px) {
+    .main-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    .shortcuts-panel {
+      width: 700px;
+      margin-top: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+<h1>🧙‍♂️ The Shortcut Wizard's Quest ⚔️</h1>
+
+<div class="story-panel">
+  <div class="story-text" id="storyText">
+    In the mystical realm of Computopia, you are Keystroke the Wizard, master of ancient shortcut magic. 
+    The evil Shadow Demons have invaded your digital kingdom, and only by mastering the sacred keyboard 
+    spells can you banish them forever. Your quest begins now...
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="game-section">
+    <div id="timer">⏰ Magic Energy: 30</div>
+    <div id="score">🏆 Demons Defeated: 0</div>
+    <div id="challenge">Cast Duplication Spell</div>
+    <div id="feedback"></div>
+    <div id="gameArea">
+      <div id="player">🧙‍♂️</div>
+    </div>
+    <button id="restartBtn">🔮 Begin New Quest</button>
+  </div>
+  
+  <div class="shortcuts-panel">
+    <h3>📜 Ancient Spell Tome</h3>
+    <div style="background: rgba(255,215,0,0.2); padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #daa520; text-align: center;">
+      <div style="color: #ffd700; font-size: 14px; font-weight: bold;">⚠️ SAFE GAMING MODE ⚠️</div>
+      <div style="color: #f0e68c; font-size: 13px; margin-top: 5px;">
+        This game safely captures Cmd shortcuts without affecting your browser!
+      </div>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-keys">Cmd + C</span>
+      <span class="shortcut-desc">Duplication Spell - Copy selected text/items</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-keys">Cmd + V</span>
+      <span class="shortcut-desc">Manifestation Spell - Paste copied content</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-keys">Cmd + X</span>
+      <span class="shortcut-desc">Severing Spell - Cut selected content</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-keys">Cmd + Z</span>
+      <span class="shortcut-desc">Time Reversal Spell - Undo last action</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-keys">Cmd + A</span>
+      <span class="shortcut-desc">Mass Selection Spell - Select all content</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-keys">Cmd + S</span>
+      <span class="shortcut-desc">Preservation Spell - Save document</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-keys">Cmd + F</span>
+      <span class="shortcut-desc">Seeking Spell - Find/search in document</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// Game data - Uses Cmd (Meta key) for Mac shortcuts
+const spells = [
+  [["Meta","c"], "Duplication Spell", "Copy"],
+  [["Meta","v"], "Manifestation Spell", "Paste"],
+  [["Meta","x"], "Severing Spell", "Cut"],
+  [["Meta","z"], "Time Reversal Spell", "Undo"],
+  [["Meta","a"], "Mass Selection Spell", "Select All"],
+  [["Meta","s"], "Preservation Spell", "Save"],
+  [["Meta","f"], "Seeking Spell", "Find"]
+];
+
+const battleMessages = [
+  "A Shadow Demon blocks your path!",
+  "The demon's eyes glow with malicious code!",
+  "This ancient beast feeds on confusion!",
+  "A powerful demon lord appears!"
+];
+
+const victoryMessages = [
+  "Your spell pierces through the demon's dark heart!",
+  "The ancient magic banishes the shadow creature!",
+  "Your keyboard mastery proves too powerful!",
+  "The demon dissolves into harmless pixels!"
+];
+
+const defeatMessages = [
+  "The demon's confusion spell overwhelms you!",
+  "Your magic wavers in the face of chaos!",
+  "The shadow creature pushes you back!",
+  "Dark energy saps your magical strength!"
+];
+
+// Game elements
+const player = document.getElementById("player");
+const gameArea = document.getElementById("gameArea");
+const challengeBox = document.getElementById("challenge");
+const feedback = document.getElementById("feedback");
+const timerDisplay = document.getElementById("timer");
+const scoreDisplay = document.getElementById("score");
+const restartBtn = document.getElementById("restartBtn");
+const storyText = document.getElementById("storyText");
+
+// Game state
+let score = 0;
+let time = 30;
+let timer;
+let currentSpell;
+let pressed = new Set();
+let demonsDefeated = 0;
+let chapter = 1;
+let inBattle = false;
+
+// Spawn demons
+function spawnDemons() {
+  const existingDemons = gameArea.querySelectorAll(".obstacle");
+  existingDemons.forEach(d => d.remove());
+  
+  for(let i = 1; i <= 6; i++) {
+    const demon = document.createElement("div");
+    demon.className = "obstacle";
+    demon.style.left = (i * 100 + 120) + "px";
+    demon.innerHTML = "👹";
+    gameArea.appendChild(demon);
+  }
+}
+
+// Start timer
+function startTimer() {
+  clearInterval(timer);
+  time = 30;
+  timerDisplay.textContent = "⏰ Magic Energy: " + time;
+  timer = setInterval(() => {
+    if (!inBattle) {
+      time--;
+      timerDisplay.textContent = "⏰ Magic Energy: " + time;
+      if(time <= 0) {
+        clearInterval(timer);
+        feedback.innerHTML = "<span style='color:red'>💀 Your magical energy is depleted! Begin a new quest!</span>";
+      }
+    }
+  }, 1000);
+}
+
+// New spell challenge
+function newSpellChallenge() {
+  currentSpell = spells[Math.floor(Math.random() * spells.length)];
+  challengeBox.textContent = `Cast ${currentSpell[1]} (${currentSpell[2]})`;
+  feedback.textContent = "";
+}
+
+// Move wizard
+function moveWizard() {
+  const currentLeft = parseInt(player.style.left) || 10;
+  const newLeft = Math.min(currentLeft + 90, gameArea.offsetWidth - 50);
+  player.style.left = newLeft + "px";
+  
+  // Visual effect
+  player.style.transform = 'scale(1.3)';
+  player.style.boxShadow = '0 0 25px limegreen';
+  setTimeout(() => {
+    player.style.transform = 'scale(1)';
+    player.style.boxShadow = '0 0 15px rgba(50, 205, 50, 0.8)';
+  }, 400);
+  
+  // Check for collisions after movement
+  setTimeout(checkCollisions, 100);
+}
+
+// Check collisions
+function checkCollisions() {
+  if (inBattle) return;
+  
+  const playerRect = player.getBoundingClientRect();
+  const demons = gameArea.querySelectorAll('.obstacle');
+  
+  demons.forEach(demon => {
+    const demonRect = demon.getBoundingClientRect();
+    
+    if (playerRect.left < demonRect.right &&
+        playerRect.right > demonRect.left &&
+        playerRect.top < demonRect.bottom &&
+        playerRect.bottom > demonRect.top) {
+      
+      startBattle(demon);
+    }
+  });
+}
+
+// Start battle
+function startBattle(demon) {
+  if (inBattle) return;
+  inBattle = true;
+  
+  const battleMsg = battleMessages[Math.floor(Math.random() * battleMessages.length)];
+  
+  // Create battle overlay
+  const battleOverlay = document.createElement('div');
+  battleOverlay.className = 'battle-overlay';
+  battleOverlay.innerHTML = `
+    <div style="font-size: 20px; margin-bottom: 15px; color: #ffcccc;">
+      ${battleMsg}
+    </div>
+    <div style="font-size: 28px; color: #ffd700; margin: 15px 0; font-weight: bold;">
+      ⚔️ Cast "${currentSpell[1]}" (${currentSpell[2]}) to defeat it! ⚔️
+    </div>
+    <div style="font-size: 18px; color: #ff9999;" id="battleTimer">
+      You have 3 seconds of magical energy!
+    </div>
+  `;
+  gameArea.appendChild(battleOverlay);
+  
+  // Make demon pulse
+  demon.style.animation = 'pulse 0.5s infinite';
+  demon.style.transform = 'scale(1.2)';
+  
+  // Battle countdown
+  let battleTime = 3;
+  const battleCountdown = setInterval(() => {
+    battleTime--;
+    const timerElement = document.getElementById('battleTimer');
+    if (timerElement && battleTime > 0) {
+      timerElement.textContent = `You have ${battleTime} seconds of magical energy!`;
+    }
+  }, 1000);
+  
+  // Battle timeout
+  setTimeout(() => {
+    if (battleOverlay.parentNode) {
+      clearInterval(battleCountdown);
+      defeatSequence(demon, battleOverlay);
+    }
+  }, 3000);
+  
+  // Store battle data for the keydown handler
+  battleOverlay.demon = demon;
+  battleOverlay.battleCountdown = battleCountdown;
+}
+
+// Victory sequence
+function victorySequence(demon, battleOverlay) {
+  const victoryMsg = victoryMessages[Math.floor(Math.random() * victoryMessages.length)];
+  
+  // Create explosion
+  createExplosion(demon.offsetLeft + 20, demon.offsetTop + 20);
+  
+  battleOverlay.innerHTML = `
+    <div style="font-size: 32px; margin-bottom: 15px; color: gold;">
+      🏆 DEMON VANQUISHED! 🏆
+    </div>
+    <div style="font-size: 20px; color: lime; margin-bottom: 10px;">
+      ${victoryMsg}
+    </div>
+    <div style="font-size: 18px; color: #ffff99;">
+      +15 magical power gained!
+    </div>
+  `;
+  
+  // Update score
+  score += 15;
+  demonsDefeated++;
+  scoreDisplay.textContent = "🏆 Demons Defeated: " + demonsDefeated;
+  
+  // Remove demon
+  setTimeout(() => {
+    demon.remove();
+  }, 500);
+  
+  // Update story for chapter progression
+  if (demonsDefeated % 5 === 0 && chapter < 5) {
+    chapter++;
+    updateStory();
+  }
+  
+  // Clean up battle
+  setTimeout(() => {
+    if (battleOverlay.parentNode) {
+      battleOverlay.remove();
+    }
+    inBattle = false;
+    feedback.innerHTML = `<span style='color:gold'>✨ ${victoryMsg} ✨</span>`;
+  }, 2000);
+}
+
+// Defeat sequence
+function defeatSequence(demon, battleOverlay) {
+  const defeatMsg = defeatMessages[Math.floor(Math.random() * defeatMessages.length)];
+  
+  // Knock player back
+  const currentLeft = parseInt(player.style.left) || 10;
+  player.style.left = Math.max(10, currentLeft - 100) + "px";
+  
+  battleOverlay.innerHTML = `
+    <div style="font-size: 28px; margin-bottom: 15px; color: #ff6666;">
+      💀 SPELL FAILED! 💀
+    </div>
+    <div style="font-size: 18px; margin-bottom: 10px;">
+      ${defeatMsg}
+    </div>
+    <div style="font-size: 16px;">
+      Your magical energy weakens...
+    </div>
+  `;
+  
+  // Time penalty
+  time = Math.max(0, time - 10);
+  timerDisplay.textContent = "⏰ Magic Energy: " + time;
+  
+  // Player hit animation
+  player.classList.add('player-hit');
+  setTimeout(() => player.classList.remove('player-hit'), 1000);
+  
+  // Clean up battle
+  setTimeout(() => {
+    if (battleOverlay.parentNode) {
+      battleOverlay.remove();
+    }
+    demon.style.animation = '';
+    demon.style.transform = 'scale(1)';
+    inBattle = false;
+    feedback.innerHTML = `<span style='color:red'>⚡ ${defeatMsg} ⚡</span>`;
+    
+    if (time <= 0) {
+      clearInterval(timer);
+      feedback.innerHTML = "<span style='color:red'>💀 Your magical energy is depleted! Begin a new quest!</span>";
+    }
+  }, 2500);
+}
+
+// Create explosion effect
+function createExplosion(x, y) {
+  for(let i = 0; i < 3; i++) {
+    setTimeout(() => {
+      const explosion = document.createElement('div');
+      explosion.className = 'explosion';
+      explosion.style.left = (x - 30 - i * 10) + 'px';
+      explosion.style.top = (y - 30 - i * 10) + 'px';
+      explosion.style.width = (60 + i * 20) + 'px';
+      explosion.style.height = (60 + i * 20) + 'px';
+      gameArea.appendChild(explosion);
+      
+      setTimeout(() => {
+        if (explosion.parentNode) {
+          explosion.remove();
+        }
+      }, 800);
+    }, i * 150);
+  }
+}
+
+// Update story
+function updateStory() {
+  const stories = [
+    "In the mystical realm of Computopia, you are Keystroke the Wizard, master of ancient shortcut magic. The evil Shadow Demons have invaded your digital kingdom, and only by mastering the sacred keyboard spells can you banish them forever. Your quest begins now...",
+    
+    "Your magical prowess grows stronger! The Shadow Demons tremble as you demonstrate mastery over the sacred shortcuts. But beware - more powerful creatures lurk in the deeper realms of the digital kingdom...",
+    
+    "Legends speak of your growing power, Keystroke the Wise! Your fingers dance across the mystical keyboard with increasing confidence. The very fabric of Computopia responds to your magical commands...",
+    
+    "You have become a true master of the ancient arts! The Shadow Demons flee at the mere sight of your glowing fingertips. Yet the greatest challenges still await in the final depths of the digital realm...",
+    
+    "🎉 VICTORY! 🎉 You have achieved the rank of Supreme Shortcut Master! The Shadow Demons have been banished from Computopia forever. Your legend will be sung by digital bards for generations to come!"
+  ];
+  
+  if (chapter <= stories.length) {
+    storyText.innerHTML = stories[chapter - 1];
+  }
+}
+
+// Reset game
+function resetQuest() {
+  score = 0;
+  demonsDefeated = 0;
+  chapter = 1;
+  inBattle = false;
+  scoreDisplay.textContent = "🏆 Demons Defeated: " + demonsDefeated;
+  player.style.left = "10px";
+  player.classList.remove('player-hit');
+  player.style.transform = 'scale(1)';
+  
+  // Clear any battle overlays
+  const battleOverlays = gameArea.querySelectorAll('.battle-overlay');
+  battleOverlays.forEach(overlay => overlay.remove());
+  
+  spawnDemons();
+  pressed.clear();
+  startTimer();
+  newSpellChallenge();
+  updateStory();
+  feedback.textContent = "";
+}
+
+// Event listeners
+restartBtn.addEventListener("click", resetQuest);
+
+document.addEventListener("keydown", e => {
+  // CRITICAL: Prevent ALL default browser shortcuts with Meta/Cmd key
+  if(e.metaKey) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  // Handle battle input
+  if (inBattle) {
+    let battlePressed = new Set();
+    if(e.metaKey) battlePressed.add("Meta");
+    if(e.shiftKey) battlePressed.add("Shift");
+    if(e.altKey) battlePressed.add("Alt");
+    
+    let key = e.key.toLowerCase();
+    if(!['Meta','Shift','Alt'].includes(e.key)) {
+      battlePressed.add(key);
+    }
+    
+    if(currentSpell && currentSpell[0].every(k => battlePressed.has(k))) {
+      const battleOverlay = gameArea.querySelector('.battle-overlay');
+      if (battleOverlay && battleOverlay.demon) {
+        clearInterval(battleOverlay.battleCountdown);
+        victorySequence(battleOverlay.demon, battleOverlay);
+      }
+    }
+    return;
+  }
+  
+  // Handle normal gameplay
+  let key = e.key.toLowerCase();
+  if(e.metaKey) pressed.add("Meta");
+  if(e.shiftKey) pressed.add("Shift");
+  if(e.altKey) pressed.add("Alt");
+  
+  if(!['Meta','Shift','Alt'].includes(e.key)) {
+    pressed.add(key);
+  }
+  
+  // Check if spell is cast correctly
+  if(currentSpell && currentSpell[0].every(k => pressed.has(k))) {
+    score += 5;
+    feedback.innerHTML = "<span style='color:lime'>✨ Spell cast successfully! The wizard advances! ✨</span>";
+    moveWizard();
+    pressed.clear();
+    
+    // Restore magical energy
+    time = 30;
+    timerDisplay.textContent = "⏰ Magic Energy: " + time;
+    
+    newSpellChallenge();
+  }
+});
+
+document.addEventListener("keyup", e => {
+  if (inBattle) return;
+  
+  let key = e.key.toLowerCase();
+  if(e.key === 'Meta') pressed.delete("Meta");
+  if(e.key === 'Shift') pressed.delete("Shift");
+  if(e.key === 'Alt') pressed.delete("Alt");
+  
+  if(!['Meta','Shift','Alt'].includes(e.key)) {
+    pressed.delete(key);
+  }
+});
+
+// Prevent context menu
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// Start the quest!
+resetQuest();
+</script>
+</body>
+</html>
